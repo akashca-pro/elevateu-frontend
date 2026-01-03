@@ -204,7 +204,7 @@ const FormModal = ({ existValues=null, useAction, refetch })=>{
     render={({ field }) => (
       <FormItem className="flex-1">
         <FormLabel>Expiry Date</FormLabel>
-        <Popover>
+        <Popover modal={true}>
           <PopoverTrigger asChild>
             <FormControl className="flex-1">
               <Button variant="outline" className="w-full text-left">
