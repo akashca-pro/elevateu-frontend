@@ -198,7 +198,7 @@ const Notification = ({ userId, role }) => {
               <div className="flex flex-col items-center justify-center h-[200px] text-center p-4">
                 <Bell className="h-6 w-6 text-gray-600 hover:text-purple-600 md:block" />
                 <p className="text-sm text-gray-500">No notifications yet</p>
-                <p className="text-xs text-gray-400 mt-1">We'll notify you when something arrives</p>
+                <p className="text-xs text-gray-400 mt-1">We&apos;ll notify you when something arrives</p>
               </div>
             ) : (
               <div className="divide-y">

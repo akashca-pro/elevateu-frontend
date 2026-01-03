@@ -13,7 +13,7 @@ const ResetPassword = ({role, useResetPassword, navigateTo, useReSend}) => {
     const [resetPassword,{isLoading}] = useResetPassword()
  
     const {formData,errors,handleChange,showPassword,showConfirmPassword,toggleConfirmPasswordVisibility
-        ,togglePasswordVisibility
+        ,togglePasswordVisibility, resetForm
     } = useForm()
     
     const {handleChange : handleOtp ,handleKeyDown,inputs,otp, handleResend : reset, timer} = useOtp(6,300)
@@ -65,7 +65,7 @@ const ResetPassword = ({role, useResetPassword, navigateTo, useReSend}) => {
         toast.success(response?.message, { id: toastId, duration: 3000 });
         navigate(navigateTo);
       } catch (error) {
-        console.log(error);
+        console.error('Reset password error:', error);
         toast.error(error?.data?.message || error?.error || "Reset password Failed, try again later", {
           id: toastId,
           duration: 3000,

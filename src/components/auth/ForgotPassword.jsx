@@ -1,7 +1,6 @@
 import useForm from "@/hooks/useForm"
 import { Link, useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import React from "react"
 
 
 const ForgotPassword = ({role, useForgotPassword, navigateTo }) => {
@@ -48,7 +47,7 @@ const ForgotPassword = ({role, useForgotPassword, navigateTo }) => {
           <div className="space-y-2 text-center">
             <h1 className="text-3xl font-bold">Reset Your Password</h1>
             <p className="text-gray-500">
-              Forgot your password? No worries, then let's submit password reset. It will be sent to your email.
+              Forgot your password? No worries, then let&apos;s submit password reset. It will be sent to your email.
             </p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">

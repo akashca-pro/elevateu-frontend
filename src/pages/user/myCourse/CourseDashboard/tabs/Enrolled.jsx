@@ -144,7 +144,7 @@ const Enrolled = () => {
             </div>
             <h3 className="text-xl font-semibold text-gray-700 mb-2">No Courses Found</h3>
             <p className="text-gray-500 max-w-md">
-              You haven't enrolled in any courses yet. Browse our catalog to find courses that interest you.
+              You haven&apos;t enrolled in any courses yet. Browse our catalog to find courses that interest you.
             </p>
             <Button
               className="mt-6 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90"

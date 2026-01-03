@@ -26,21 +26,16 @@ function Login({ role, useLogin, useAuthActions }) {
     e.preventDefault();
     if (isFormValid) return;
 
-    const loginPromise = new Promise(async (resolve, reject) => {
-      try {
-        const response = await loginAuth(formData).unwrap();
-        login(response?.data?._id);
-        resolve("Login successful!");
-        navigate("/");
-      } catch (error) {
-        reject(error?.data?.message || "Login failed. Please try again.");
-      }
+    const loginPromise = loginAuth(formData).unwrap().then((response) => {
+      login(response?.data?._id);
+      navigate("/");
+      return "Login successful!";
     });
 
     toast.promise(loginPromise, {
       loading: "Logging in...",
       success: (msg) => msg,
-      error: (err) => err,
+      error: (err) => err?.data?.message || "Login failed. Please try again.",
     });
   };
 
@@ -167,7 +162,7 @@ function Login({ role, useLogin, useAuthActions }) {
               </button>
             </div>}
             <p className="text-center text-sm text-gray-500">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <a href={`/${role}/sign-up`} className="text-primary hover:underline">
                 Sign up
               </a>

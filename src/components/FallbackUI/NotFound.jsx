@@ -82,7 +82,7 @@ const NotFound = () => {
                     Page Not Found
                   </motion.h2>
                   <motion.p className="text-gray-600 mb-8 max-w-md" variants={itemVariants}>
-                    Oops! The learning resource you're looking for seems to have gone missing from our library.
+                    Oops! The learning resource you&apos;re looking for seems to have gone missing from our library.
                   </motion.p>
                   <motion.div variants={itemVariants}>
                     <motion.button

@@ -58,7 +58,7 @@ const OTPVerification = ({ role, useSignup, useAuthActions }) => {
   
     try {
       // Verify OTP
-      const response = await verifyOtp(credentials).unwrap();
+      const _response = await verifyOtp(credentials).unwrap();
     
       const responseSignup = await signup(formData).unwrap()
       toast.success(responseSignup?.message || "Signup successful", { id: toastId });
@@ -122,7 +122,7 @@ const OTPVerification = ({ role, useSignup, useAuthActions }) => {
               Verify
             </button>
             <div className="mt-4 text-sm text-gray-500">
-              Didn't receive code?{" "}
+              Didn&apos;t receive code?{" "}
               <button
                 type="button"
                 className={`font-medium ${timer === 0 ? "text-primary" : "text-gray-400"}`}
