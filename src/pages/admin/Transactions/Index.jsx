@@ -40,7 +40,6 @@ export default function TransactionsPage() {
   const { data, refetch } = useLoadTransactionsQuery(currentPage)
 
   const transactions = data?.data?.transactions
-  console.log(data?.data?.transactions)
 
   // Filter transactions based on search query, tab, and date filter
   const filteredTransactions = transactions?.filter((transaction) => {
@@ -79,8 +78,37 @@ export default function TransactionsPage() {
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction)
-    console.log(transaction)
     setIsModalOpen(true)
+  }
+
+  // Export transactions as JSON
+  const handleExportJSON = () => {
+    if (!filteredTransactions || filteredTransactions.length === 0) {
+      return
+    }
+    
+    const exportData = filteredTransactions.map(transaction => ({
+      id: transaction.id,
+      type: transaction.type,
+      date: transaction.date,
+      amount: transaction.amount,
+      status: transaction.status,
+      users: transaction.users?.map(u => ({ name: u.firstName, email: u.email })),
+      course: transaction.course?.name,
+      orderId: transaction.order?.orderId
+    }))
+    
+    const jsonString = JSON.stringify(exportData, null, 2)
+    const blob = new Blob([jsonString], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `transactions_${new Date().toISOString().split('T')[0]}.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
   }
 
   return (
@@ -106,9 +134,15 @@ export default function TransactionsPage() {
                     <RefreshCw className="h-3.5 w-3.5" />
                     <span className="hidden sm:inline">Refresh</span>
                   </Button>
-                  <Button variant="outline" size="sm" className="h-8 gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-8 gap-1"
+                    onClick={handleExportJSON}
+                    disabled={!filteredTransactions || filteredTransactions.length === 0}
+                  >
                     <Download className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline">Export</span>
+                    <span className="hidden sm:inline">Export JSON</span>
                   </Button>
                 </div>
               </div>

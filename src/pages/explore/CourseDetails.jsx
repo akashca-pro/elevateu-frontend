@@ -1,7 +1,5 @@
-"use client"
-
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { useParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -44,7 +42,7 @@ import { CourseDetailsSkeleton } from "@/components/Skeletons/CourseDetailsSkele
 import { motion } from "framer-motion"
 
 const CourseDetails = () => {
-  const { tutor, admin } = useSelect()
+  const { user: userAuth, tutor, admin } = useSelect()
   const [selectedLesson, setSelectedLesson] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { courseId } = useParams()
@@ -97,12 +95,29 @@ const CourseDetails = () => {
   }, [user, course])
 
   const handleBookmark = async () => {
+    // Check if user is logged in
+    if (!userAuth.isAuthenticated) {
+      toast.info("Login Required", {
+        description: "Please log in to bookmark courses.",
+        action: {
+          label: "Login",
+          onClick: () => navigate("/user/login")
+        },
+        duration: 5000,
+      })
+      return
+    }
+    
     try {
       if (!isBookmarked) {
         await bookmarkCourse({ courseId }).unwrap()
         setIsBookmarked(true)
-        toast.info("Course Bookmarked", {
+        toast.success("Course Bookmarked", {
           description: `${course?.title} is added to your bookmarked collection`,
+          action: {
+            label: "View Bookmarks",
+            onClick: () => navigate("/user/profile/my-courses?tab=bookmarks")
+          },
         })
       } else {
         await removeBookmark(courseId).unwrap()
@@ -112,7 +127,7 @@ const CourseDetails = () => {
         })
       }
     } catch (error) {
-      console.log("Error bookmarking course")
+      console.error("Error bookmarking course:", error)
       toast.error("Something went wrong")
     }
   }
@@ -122,12 +137,23 @@ const CourseDetails = () => {
       if (!user) {
         toast.info("Join to Enroll", {
           description: "Please log in or sign up to purchase this course.",
-          duration: 4000,
+          duration: 5000,
+          action: {
+            label: "Login",
+            onClick: () => navigate("/user/login")
+          },
         })
         return null
       }
       await addToCart({ courseId: course._id }).unwrap()
       refetchCartDetails()
+      toast.success("Added to Cart", {
+        description: `${course?.title} is ready for checkout.`,
+        action: {
+          label: "Buy Now",
+          onClick: () => navigate(`/explore/courses/${course._id}/checkout`)
+        },
+      })
       navigate(`/explore/courses/${course._id}/checkout`)
     } catch (error) {
       if (error?.status === 400) {

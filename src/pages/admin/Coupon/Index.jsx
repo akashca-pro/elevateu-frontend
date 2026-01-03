@@ -1,5 +1,5 @@
-import { ChevronLeft, ChevronRight, Delete, Edit, Search, Trash, Trash2 } from 'lucide-react'
-import React, { use, useState } from 'react'
+import { ChevronLeft, ChevronRight, Search, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 import FormModal from './components/FormModal'
 import { FilterBox } from '@/components/FilterBox'
 import { Input } from '@/components/ui/input'

@@ -7,7 +7,6 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader,
      DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "sonner"
 import { Edit, PlusCircle } from "lucide-react"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -15,7 +14,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
 import { Calendar } from "@/components/ui/calendar"
-import { useAdminCreateCouponMutation } from '@/services/adminApi/adminCouponApi.js'
 import { Switch } from "@/components/ui/switch"
 
 
@@ -23,6 +21,18 @@ const FormModal = ({ existValues=null, useAction, refetch })=>{
     const [isOpen, setIsOpen] = useState(false)
     const [confirmClose,setConfirmClose] = useState(false)
     const [addOrUpdateCoupon] = useAction()
+    
+    // Ensure date is properly formatted for form initialization
+    const getInitialExpiryDate = () => {
+        if (!existValues?.expiryDate) return ""
+        // If it's already a valid date string, return it
+        try {
+            const date = new Date(existValues.expiryDate)
+            return isNaN(date.getTime()) ? "" : date.toISOString()
+        } catch {
+            return ""
+        }
+    }
     
     const form = useForm({
         resolver : zodResolver(couponSchema),
@@ -32,7 +42,7 @@ const FormModal = ({ existValues=null, useAction, refetch })=>{
             discountValue : existValues?.discountValue || 0,
             minPurchaseAmount : existValues?.minPurchaseAmount || 0,
             maxDiscount : existValues?.maxDiscount || 0,
-            expiryDate : existValues?.expiryDate || "",
+            expiryDate : getInitialExpiryDate(),
             usageLimit : existValues?.usageLimit || 1,
             isActive : existValues?.isActive || false
         }
@@ -44,7 +54,6 @@ const FormModal = ({ existValues=null, useAction, refetch })=>{
         }
         const toastId = toast.loading('Please wait...')
         try {
-            console.log(data)
             await addOrUpdateCoupon({ formData : data }).unwrap()
 
             toast.success('Coupon created',{
@@ -55,7 +64,7 @@ const FormModal = ({ existValues=null, useAction, refetch })=>{
             form.reset()
             refetch()
         } catch (error) {
-            console.log(error)
+            console.error("Coupon operation failed:", error)
             if (error?.status === 400 && Array.isArray(error?.data?.errors)) {
                 const errorMessages = error.data.errors.map((err) => `• ${err.msg}`).join("\n");
         

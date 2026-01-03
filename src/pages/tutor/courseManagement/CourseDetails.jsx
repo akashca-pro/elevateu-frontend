@@ -47,7 +47,7 @@ const CourseDetails = () => {
     refetchOnMountOrArgChange : true
   })
   const { data : categoryDetails } = useLoadCategoriesQuery()
-  console.log(courseDetails)
+
 
   useEffect(() => {
     if (courseDetails?.data) {
@@ -409,35 +409,6 @@ const CourseDetails = () => {
                   </span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <Button className="w-full justify-start" variant="outline">
-                <Users className="mr-2 h-4 w-4" /> View Enrollments
-              </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <Award className="mr-2 h-4 w-4" /> View Analytics
-              </Button>
-              {course.status !== "approved" && (
-                <Button 
-                onClick={handleSubmitApproval}
-                disabled = {course?.status === 'pending' || course?.status === 'approved' || isEditing || course?.status === 'suspended'}
-                className="w-full justify-start" variant="default">
-                  <Clock className="mr-2 h-4 w-4" />
-                   {course?.status === 'pending' 
-                   ? 'Request Pending' 
-                   : course?.status === 'approved'
-                   ? 'Already approved' 
-                   : course?.status === 'suspended'
-                   ? 'Suspended'
-                   : 'Submit for Approval'}
-                </Button>
-              )}
             </CardContent>
           </Card>
         </div>

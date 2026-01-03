@@ -14,9 +14,11 @@ const Index = () => {
     month: viewType === "monthly" || viewType === "weekly" ? month : undefined,
   });
 
-  console.log(revenueData)
-
   const { data : details } = useDashboardMetricsQuery()
+
+  // Generate years dynamically (current year + 2 previous years)
+  const currentYear = new Date().getFullYear()
+  const availableYears = [currentYear, currentYear - 1, currentYear - 2]
 
   const metrics = [
     {
@@ -55,15 +57,15 @@ const Index = () => {
         {/* Chart Section */}
         <div className="rounded-lg border border-gray-100 bg-white p-6">
         <div className="flex gap-4 justify-end">
-          {/* Year Selector */}
-          <Select onValueChange={(value) => setYear(value)} defaultValue={String(year)}>
+          {/* Year Selector - Dynamic with latest first */}
+          <Select onValueChange={(value) => setYear(Number(value))} defaultValue={String(year)}>
             <SelectTrigger className="w-[100px]">
               <SelectValue placeholder="Year" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="2025">2025</SelectItem>
-              <SelectItem value="2024">2024</SelectItem>
-              <SelectItem value="2023">2023</SelectItem>
+              {availableYears.map((yr) => (
+                <SelectItem key={yr} value={String(yr)}>{yr}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
 

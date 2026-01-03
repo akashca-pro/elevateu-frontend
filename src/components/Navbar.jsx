@@ -12,12 +12,24 @@ import { toast } from "sonner"
 import { motion } from "framer-motion"
 import { GlobalSearch } from "./Search"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 const Navbar = ({ setSidebarCollapsed, isSidebarCollapsed }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState(null)
+  const [_searchTerm, setSearchTerm] = useState(null)
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
   const { user, tutor, admin } = useSelect()
 
   const role = user.isAuthenticated ? "user" : tutor.isAuthenticated ? "tutor" : admin.isAuthenticated ? "admin" : null
@@ -176,15 +188,35 @@ const Navbar = ({ setSidebarCollapsed, isSidebarCollapsed }) => {
                 <Notification role={role} userId={roleData} />
               </div>
 
-              {/* Logout */}
-              <motion.div whileHover={{ scale: 1.1, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <button
-                  onClick={handleLogout}
-                  className="hidden text-gray-600 hover:text-red-600 transition-colors md:block"
-                >
-                  <LogOut className="h-6 w-6" />
-                </button>
-              </motion.div>
+              {/* Logout with Confirmation */}
+              <AlertDialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
+                <AlertDialogTrigger asChild>
+                  <motion.div whileHover={{ scale: 1.1, y: -2 }} whileTap={{ scale: 0.95 }}>
+                    <button
+                      className="hidden text-gray-600 hover:text-red-600 transition-colors md:block"
+                    >
+                      <LogOut className="h-6 w-6" />
+                    </button>
+                  </motion.div>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to log out? You will need to log in again to access your account.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={handleLogout}
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      Logout
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </>
           ) : (
             <div className="hidden gap-4 md:flex">
@@ -264,15 +296,35 @@ const Navbar = ({ setSidebarCollapsed, isSidebarCollapsed }) => {
                       Profile
                     </Link>
 
-                    <button
-                      onClick={() => {
-                        handleLogout()
-                        setMenuOpen(false)
-                      }}
-                      className="w-full text-left text-red-600 hover:text-red-700 transition-colors py-2 px-3 rounded-lg hover:bg-red-50 font-medium"
-                    >
-                      Logout
-                    </button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <button
+                          className="w-full text-left text-red-600 hover:text-red-700 transition-colors py-2 px-3 rounded-lg hover:bg-red-50 font-medium"
+                        >
+                          Logout
+                        </button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to log out? You will need to log in again to access your account.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={() => {
+                              handleLogout()
+                              setMenuOpen(false)
+                            }}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Logout
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </>
                 ) : (
                   <>

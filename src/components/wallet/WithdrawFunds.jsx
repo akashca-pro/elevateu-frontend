@@ -12,8 +12,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { ArrowUpRight, DollarSign, CreditCard, AlertCircle, CheckCircle, Loader2, IndianRupee, XCircle } from "lucide-react"
+import { ArrowUpRight, CreditCard, AlertCircle, CheckCircle, Loader2, IndianRupee, XCircle, Ban } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { toast } from "sonner"
 
 const WithdrawFunds = forwardRef(({ isOpen, onClose, onWithdraw, maxAmount, paymentMethods }, ref) => {
   const [amount, setAmount] = useState("")
@@ -112,9 +113,27 @@ const WithdrawFunds = forwardRef(({ isOpen, onClose, onWithdraw, maxAmount, paym
     if (method.type === "paypal") {
       return `PayPal (${method.email})`
     } else if (method.type === "bank") {
-      return `Bank Account (${method.accountNumber})`
+      return `Bank Account (${method.accountNumber || "Not configured"})`
     }
     return method.type
+  }
+
+  // Check if bank details are properly configured
+  const isBankDetailsComplete = (method) => {
+    if (method.type !== "bank") return true
+    return method.accountNumber && method.accountNumber !== "****" && method.accountNumber.length > 4
+  }
+
+  const handleMethodChange = (methodId) => {
+    const method = paymentMethods?.find((m) => m.id === methodId)
+    if (method && !isBankDetailsComplete(method)) {
+      toast.warning("Bank Details Required", {
+        description: "Please add your bank account details in your profile settings before using this payment method.",
+        duration: 5000,
+      })
+      return
+    }
+    setSelectedMethod(methodId)
   }
 
   return (
@@ -160,24 +179,44 @@ const WithdrawFunds = forwardRef(({ isOpen, onClose, onWithdraw, maxAmount, paym
 
               <div className="space-y-2">
                 <Label>Payment Method</Label>
-                <RadioGroup value={selectedMethod} onValueChange={setSelectedMethod} className="space-y-2">
-                  {paymentMethods?.map((method) => (
+                <RadioGroup value={selectedMethod} onValueChange={handleMethodChange} className="space-y-2">
+                  {paymentMethods?.map((method) => {
+                    const isDisabled = !isBankDetailsComplete(method)
+                    return (
                     <div
                       key={method.id}
                       className={`flex items-center space-x-2 border rounded-md p-3 transition-colors ${
-                        selectedMethod === method.id ? "border-primary bg-primary/5" : "hover:bg-accent"
+                        isDisabled 
+                          ? "opacity-50 cursor-not-allowed bg-gray-50" 
+                          : selectedMethod === method.id 
+                            ? "border-primary bg-primary/5" 
+                            : "hover:bg-accent"
                       }`}
                     >
-                      <RadioGroupItem value={method.id} id={method.id} />
-                      <Label htmlFor={method.id} className="flex-1 flex items-center gap-2 cursor-pointer">
-                        <CreditCard className="h-4 w-4 text-primary" />
+                      <RadioGroupItem 
+                        value={method.id} 
+                        id={method.id} 
+                        disabled={isDisabled}
+                      />
+                      <Label 
+                        htmlFor={method.id} 
+                        className={`flex-1 flex items-center gap-2 ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+                      >
+                        {isDisabled ? (
+                          <Ban className="h-4 w-4 text-gray-400" />
+                        ) : (
+                          <CreditCard className="h-4 w-4 text-primary" />
+                        )}
                         {getPaymentMethodLabel(method)}
-                        {method.isDefault && (
+                        {method.isDefault && !isDisabled && (
                           <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Default</span>
+                        )}
+                        {isDisabled && (
+                          <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Not configured</span>
                         )}
                       </Label>
                     </div>
-                  ))}
+                  )})}
                 </RadioGroup>
                 {errors.method && <p className="text-sm text-red-500">{errors.method}</p>}
               </div>
