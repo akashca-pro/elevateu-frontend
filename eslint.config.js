@@ -6,6 +6,19 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
   { ignores: ['dist'] },
+  // Configuration for Node.js config files
+  {
+    files: ['*.config.js', 'postcss.config.js', 'tailwind.config.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        require: 'readonly',
+        __dirname: 'readonly',
+        module: 'readonly',
+      },
+    },
+  },
+  // Main React app configuration
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -33,6 +46,14 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+      // Disable prop-types (common when not using TypeScript)
+      'react/prop-types': 'off',
+      // Allow unused variables starting with underscore
+      'no-unused-vars': ['warn', { 
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_'
+      }],
     },
   },
 ]
+

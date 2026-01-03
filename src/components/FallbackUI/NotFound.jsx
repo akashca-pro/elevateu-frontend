@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { BookX, Home, ArrowRight } from "lucide-react"
-import Footer from "@/components/Footer"
 
 const NotFound = () => {
   const navigate = useNavigate()

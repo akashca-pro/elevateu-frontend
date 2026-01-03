@@ -17,47 +17,52 @@ const Notification = ({ userId, role }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
 
-let queryResult;
-let readNotificationQuery;
+  // Call all hooks unconditionally at top level (React Rules of Hooks)
+  // Use 'skip' option to prevent API calls for non-matching roles
+  const userQueryResult = useUserLoadNotificationsQuery(undefined, { 
+    skip: role !== 'user' 
+  });
+  const [userReadNotification] = useUserReadNotificationsMutation();
+  
+  const tutorQueryResult = useTutorLoadNotificationsQuery(undefined, { 
+    skip: role !== 'tutor' 
+  });
+  const [tutorReadNotification] = useTutorReadNotificationsMutation();
+  
+  const adminQueryResult = useAdminLoadNotificationsQuery(undefined, { 
+    skip: role !== 'admin' 
+  });
+  const [adminReadNotification] = useAdminReadNotificationsMutation();
 
-(() => {
-  switch (role) {
-    case 'user': { 
-      queryResult = useUserLoadNotificationsQuery();
-      [readNotificationQuery,] = useUserReadNotificationsMutation();
-      break;  
-    }
+  // Select the appropriate query result and mutation based on role
+  const queryResult = role === 'user' 
+    ? userQueryResult 
+    : role === 'tutor' 
+      ? tutorQueryResult 
+      : role === 'admin' 
+        ? adminQueryResult 
+        : { data: null, refetch: () => {} };
 
-    case 'tutor': {
-      queryResult = useTutorLoadNotificationsQuery();
-      [readNotificationQuery] = useTutorReadNotificationsMutation();
-      break;
-    }
-
-    case 'admin': {
-      queryResult = useAdminLoadNotificationsQuery();
-      [readNotificationQuery] = useAdminReadNotificationsMutation();
-      break;
-    }
-
-    default: {
-      queryResult = { data: null };
-      readNotificationQuery = null;
-    }
-  }
-})();
+  const readNotificationMutation = role === 'user' 
+    ? userReadNotification 
+    : role === 'tutor' 
+      ? tutorReadNotification 
+      : role === 'admin' 
+        ? adminReadNotification 
+        : null;
 
   useEffect(() => {
-
     const apiNotifications = queryResult.data?.data || [];
     const transformed = apiNotifications.map(notification => ({
       ...notification,
       isRead: notification.isRead || false, 
     }));
-    queryResult.refetch();
+    if (queryResult.refetch) {
+      queryResult.refetch();
+    }
     setNotifications(transformed);
     setUnreadCount(transformed.filter(n => !n.isRead).length);
-  }, [queryResult.data]);
+  }, [queryResult.data, queryResult.refetch]);
 
   
   useEffect(() => {
@@ -78,10 +83,12 @@ let readNotificationQuery;
     try {
       const updatedNotifications = notifications.map((n) => ({...n , isRead : true}))
       setNotifications(updatedNotifications)
-      await readNotificationQuery({ notification_id : notifications }).unwrap()
+      if (readNotificationMutation) {
+        await readNotificationMutation({ notification_id : notifications }).unwrap()
+      }
       setUnreadCount(0)
     } catch (error) {
-      console.log(error)
+      console.error('Failed to mark all as read:', error)
     }
   };
 
@@ -90,11 +97,12 @@ let readNotificationQuery;
       const updatedNotifications = [...notifications];
       updatedNotifications[index].isRead = true;
       setNotifications(updatedNotifications) 
-      console.log(notifications)
-      await readNotificationQuery({ notification_id : notifications[index] }).unwrap()
+      if (readNotificationMutation) {
+        await readNotificationMutation({ notification_id : notifications[index] }).unwrap()
+      }
       setUnreadCount((prev)=>prev - 1)
     } catch (error) {
-      console.log(error);
+      console.error('Failed to mark as read:', error);
     }
   };
 

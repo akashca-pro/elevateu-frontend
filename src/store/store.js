@@ -8,7 +8,7 @@ import userAuthReducer from '../features/auth/user/userAuthSlice.js'
 import { toast } from 'sonner'
 
 // middleware to handle 403 error
-const apiMiddleware = (store) => (next) => (action) => {
+const apiMiddleware = (_store) => (next) => (action) => {
     if (action.type.endsWith('/rejected')) {
       const status = action.payload?.status || action.error?.status;
       if (status === 403) {
