@@ -1,5 +1,5 @@
 import useForm from "@/hooks/useForm";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -42,7 +42,10 @@ function Login({ role, useLogin, useAuthActions }) {
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-gray-100">
       <div className="grid h-full w-full md:grid-cols-2 bg-white shadow-lg">
-        <div className="flex items-center justify-center p-8 overflow-auto">
+        <div className="flex items-center justify-center p-8 overflow-auto relative">
+          <Link to="/" className="absolute top-4 left-4 flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
+            <ArrowLeft className="h-4 w-4" /> Back to Home
+          </Link>
           <div className="w-full max-w-sm space-y-6">
              <div className="space-y-2 text-center">
               <h1 className="text-3xl font-bold">

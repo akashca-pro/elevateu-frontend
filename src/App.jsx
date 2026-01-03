@@ -1,5 +1,5 @@
 import { Toaster } from 'sonner'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 
 import UserRoutes from '@/pages/user/UserIndex'
 import TutorRoutes from '@/pages/tutor/TutorIndex'
@@ -32,6 +32,7 @@ const App = () => {
       <Routes>
 
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Navigate to="/user/login" replace />} />
 
         <Route path='/explore' element={<Explore />}>
           <Route index element={<ExplorePage />} />

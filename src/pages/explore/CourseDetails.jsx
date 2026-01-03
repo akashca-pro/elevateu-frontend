@@ -116,7 +116,7 @@ const CourseDetails = () => {
           description: `${course?.title} is added to your bookmarked collection`,
           action: {
             label: "View Bookmarks",
-            onClick: () => navigate("/user/profile/my-courses?tab=bookmarks")
+            onClick: () => navigate("/user/profile/my-courses?tab=bookmark")
           },
         })
       } else {

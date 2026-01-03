@@ -1,4 +1,4 @@
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import useForm from "@/hooks/useForm";
@@ -83,7 +83,10 @@ const SignUp = ({role}) => {
         </div>
 
         {/* Right Side - Form */}
-        <div className="flex items-center justify-center p-8 overflow-auto">
+        <div className="flex items-center justify-center p-8 overflow-auto relative">
+          <Link to="/" className="absolute top-4 left-4 flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
+            <ArrowLeft className="h-4 w-4" /> Back to Home
+          </Link>
           <div className="w-full max-w-sm space-y-5">
             <div className="text-center">
               <h1 className="text-3xl font-bold">{role === "user" ? "Student" : role === "tutor" ? "Tutor" : "Admin"}  Sign Up</h1>
