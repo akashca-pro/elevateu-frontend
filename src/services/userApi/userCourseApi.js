@@ -107,8 +107,26 @@ const userCourseApi = apiSlice.injectEndpoints({
             query : (queryParams) => ({
                 url : `user/bookmark-course`,
                 method : 'GET',
-                params : queryParams
+                params : queryParams,
+                // Handle 204 No Content as a valid response
+                validateStatus: (response, result) => {
+                    return response.status === 200 || response.status === 204
+                }
             }),
+            // Transform response to handle 204 No Content (empty bookmarks)
+            transformResponse: (response) => {
+                // If response is empty/null (204 No Content), return empty structure
+                if (!response || Object.keys(response).length === 0) {
+                    return {
+                        data: {
+                            courses: [],
+                            totalPages: 0,
+                            currentPage: 1
+                        }
+                    }
+                }
+                return response
+            },
             providesTags : ['User']
         }),
         userRemoveBookmarkCourse : builder.mutation({

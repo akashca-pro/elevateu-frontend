@@ -62,18 +62,11 @@ const BookmarkedCourses = () => {
   const handleRemoveBookmark = async (courseId, courseTitle) => {
     try {
       await removeBookmark(courseId).unwrap()
-      toast({
-        title: "Bookmark removed",
-        description: `${courseTitle} is removed from your bookmarked collection`,
-        variant: "default",
-      })
+      toast.success(`${courseTitle} removed from bookmarks`)
       refetch()
     } catch (error) {
       console.log("Error removing bookmark")
-      toast({
-        title: "Something went wrong",
-        variant: "destructive",
-      })
+      toast.error("Something went wrong")
     }
   }
 
