@@ -408,6 +408,23 @@ const CourseDetails = () => {
                     {course.createdAt ? format(new Date(course.createdAt), "MMM dd, yyyy") : "N/A"}
                   </span>
                 </div>
+                <div className="flex justify-between items-center">
+                {course.status !== "approved" && (
+                  <Button 
+                  onClick={handleSubmitApproval}
+                  disabled = {course?.status === 'pending' || course?.status === 'approved' || isEditing || course?.status === 'suspended'}
+                  className="w-full justify-start" variant="default">
+                    <Clock className="mr-2 h-4 w-4" />
+                    {course?.status === 'pending' 
+                    ? 'Request Pending' 
+                    : course?.status === 'approved'
+                    ? 'Already approved' 
+                    : course?.status === 'suspended'
+                    ? 'Suspended'
+                    : 'Submit for Approval'}
+                  </Button>
+                )}
+                  </div>
               </div>
             </CardContent>
           </Card>
